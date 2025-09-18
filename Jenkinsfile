@@ -12,7 +12,11 @@ spec:
     command:
     - cat
     tty: true
+  - name: jnlp
+    image: jenkins/inbound-agent:latest
+    args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
 """
+            defaultContainer 'terraform' // 👈 This line is important!
         }
     }
 
@@ -23,7 +27,6 @@ spec:
     }
 
     stages {
-       
         stage('Terraform Init') {
             steps {
                 sh 'terraform init'
