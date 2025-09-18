@@ -2,21 +2,37 @@ pipeline {
     agent {
         kubernetes {
             label 'terraform'
+            defaultContainer 'terraform'
             yaml """
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: terraform
-    image: hashicorp/terraform:1.5.0
-    command:
-    - cat
-    tty: true
-  - name: jnlp
-    image: jenkins/inbound-agent:latest
-    args: ['$(JENKINS_SECRET)', '$(JENKINS_NAME)']
+    - name: terraform
+      image: hashicorp/terraform:1.5.0
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: workspace-volume
+          mountPath: /home/jenkins/agent
+    - name: jnlp
+      image: jenkins/inbound-agent:latest
+      args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+      env:
+        - name: JENKINS_SECRET
+          value: \$(JENKINS_SECRET)
+        - name: JENKINS_NAME
+          value: \$(JENKINS_NAME)
+        - name: JENKINS_URL
+          value: http://172.19.130.166:8080/
+      volumeMounts:
+        - name: workspace-volume
+          mountPath: /home/jenkins/agent
+  volumes:
+    - name: workspace-volume
+      emptyDir: {}
 """
-            defaultContainer 'terraform' // 👈 This line is important!
         }
     }
 
