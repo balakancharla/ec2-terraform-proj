@@ -1,0 +1,56 @@
+// Jenkinsfile-destroy
+pipeline {
+    agent {
+        kubernetes {
+            label 'terraform-destroy'
+            defaultContainer 'terraform'
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: terraform
+      image: hashicorp/terraform:1.5.0
+      command:
+        - cat
+      tty: true
+      volumeMounts:
+        - name: workspace-volume
+          mountPath: /home/jenkins/agent
+
+    - name: jnlp
+      image: jenkins/inbound-agent:latest
+      env:
+        - name: JENKINS_URL
+          value: "http://172.19.130.166:8080/"
+      volumeMounts:
+        - name: workspace-volume
+          mountPath: /home/jenkins/agent
+  volumes:
+    - name: workspace-volume
+      emptyDir: {}
+'''
+        }
+    }
+
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-2'
+        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
+        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+    }
+
+    stages {
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Destroy') {
+            steps {
+                input message: 'Confirm destruction of all AWS resources?'
+                sh 'terraform destroy -auto-approve'
+            }
+        }
+    }
+}
