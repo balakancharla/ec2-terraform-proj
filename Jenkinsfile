@@ -3,7 +3,7 @@ pipeline {
         kubernetes {
             label 'terraform'
             defaultContainer 'terraform'
-            yaml """
+            yaml '''
 apiVersion: v1
 kind: Pod
 spec:
@@ -19,7 +19,7 @@ spec:
 
     - name: jnlp
       image: jenkins/inbound-agent:latest
-      args: ['\\$(JENKINS_SECRET)', '\\$(JENKINS_NAME)']
+      args: ['$JENKINS_SECRET', '$JENKINS_NAME']
       volumeMounts:
         - name: workspace-volume
           mountPath: /home/jenkins/agent
@@ -27,7 +27,7 @@ spec:
   volumes:
     - name: workspace-volume
       emptyDir: {}
-"""
+'''
         }
     }
 
