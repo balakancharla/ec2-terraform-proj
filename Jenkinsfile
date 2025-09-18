@@ -19,11 +19,12 @@ spec:
 
     - name: jnlp
       image: jenkins/inbound-agent:latest
-      args: ['$JENKINS_SECRET', '$JENKINS_NAME']
+      env:
+        - name: JENKINS_URL
+          value: "http://172.19.130.166:8080/"  # Make sure this is reachable from K3s pod
       volumeMounts:
         - name: workspace-volume
           mountPath: /home/jenkins/agent
-
   volumes:
     - name: workspace-volume
       emptyDir: {}
