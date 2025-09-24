@@ -49,10 +49,8 @@ spec:
         }
         stage('Select Workspace') {
             steps {
-                sh '''
-                  terraform workspace select ${ENV} || terraform workspace new ${ENV}
-                '''
-            }
+                sh "terraform workspace select ${ENV} || terraform workspace new ${ENV}"
+                }
         }
         stage('Terraform Plan') {
             steps {
