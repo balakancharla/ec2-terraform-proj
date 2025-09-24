@@ -7,7 +7,8 @@ resource "aws_instance" "web" {
   instance_type = var.instance_type
 
   tags = {
-    Name = "Jenkins-Terraform-EC2"
-  }
+      Name        = "web-server-${terraform.workspace}"
+      Environment = terraform.workspace
+    }
 }
 

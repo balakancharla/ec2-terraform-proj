@@ -32,6 +32,9 @@ spec:
         }
     }
 
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'prod'], description: 'Choose your environment')
+    }
     environment {
         AWS_DEFAULT_REGION = 'us-east-2'
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
@@ -44,7 +47,13 @@ spec:
                 sh 'terraform init'
             }
         }
-
+        stage('Select Workspace') {
+            steps {
+                sh '''
+                  terraform workspace select ${ENV} || terraform workspace new ${ENV}
+                '''
+            }
+        }
         stage('Terraform Plan') {
             steps {
                 sh 'terraform plan'
