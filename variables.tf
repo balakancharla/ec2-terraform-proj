@@ -7,5 +7,5 @@ variable "instance_type" {
 }
 
 variable "ami_id" {
-  default = "ami-0cfde0ea8edd312d4" # Replace with valid AMI in your region
+  default = "ami-06e3c045d79fd65d9" # Replace with valid AMI in your region
 }
