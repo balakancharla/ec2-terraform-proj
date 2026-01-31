@@ -49,9 +49,15 @@ spec:
             }
         }
 
+        stage('Select Workspace') {
+    steps {
+        sh "terraform workspace select ${ENV}"
+    }
+}
+
         stage('Terraform Destroy') {
             steps {
-                input message: 'Confirm destruction of all AWS resources?'
+                input message: 'Confirm destruction of ${ENV} environment?'
                 sh 'terraform destroy -auto-approve'
             }
         }
